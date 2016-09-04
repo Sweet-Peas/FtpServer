@@ -40,25 +40,26 @@ IPAddress serverIp( 192, 168, 1, 82 );
 void setup()
 {
   Serial.begin(9600);
-  Serial << "=== Test of FTP Server ====" << endl;;
+  Serial.println(F("=== Test of FTP Server ===="));
 
   // If other chips are connected to SPI bus, set to high the pin connected to their CS
   pinMode( 4, OUTPUT ); 
   digitalWrite( 4, HIGH );
 
   // Initialize the SD card.
-  Serial << "Mount the SD card with library ";
+  Serial.print(F("Mount the SD card with library "));
   #if FAT_SYST == 0
-    Serial << "SdFat ... ";
+    Serial.print(F("SdFat ... "));
   #else
-    Serial << "FatFs ... ";
+    Serial.print/F("FatFs ... "));
   #endif
+
   if( ! FAT.begin( CS_SDCARD, SPI_FULL_SPEED ))
   {
-    Serial << "Unable to mount SD card" << endl;
+    Serial.println(F("Unable to mount SD card"));
     while( true ) ;
   }
-  Serial << "ok" << endl;
+  Serial.println(F("ok"));
 
   // Send reset to W5200
   if( P_RESET > -1 )
@@ -75,12 +76,15 @@ void setup()
   // /*
   if( Ethernet.begin( mac ) == 0 )
   {
-    Serial << "Can't connect to network!" << endl;
+    Serial.println(F("Can't connect to network!"));
     while( 1 ) ;
   }
   serverIp = Ethernet.localIP();
-  Serial << "IP address of server: " << serverIp[0] << "."
-         << serverIp[1] << "." << serverIp[2] << "." << serverIp[3] << endl;
+  Serial.print(F("IP address of server: "));
+  Serial.print(serverIp[0]); Serial.write('.');
+  Serial.print(serverIp[1]); Serial.write('.');
+  Serial.print(serverIp[2]); Serial.write('.');
+  Serial.print(serverIp[3]); Serial.println();
   // */
   
   // Initialize the FTP server
