@@ -1,11 +1,12 @@
 /*
- * FTP Serveur for Arduino Due and Ethernet shield (W5100) or WIZ820io (W5200)
+ * FTP Server for Arduino Due and Ethernet shield (W5100) or WIZ820io (W5200)
  * Copyright (c) 2014-2015 by Jean-Michel Gallego
+ * 
+ * Modified to work without streaming library. Tested on Electronic Sweet Peas
+ * NetFox card using W5500. Pontus Oldberg - 2016
  *
  * Please read file ReadMe.txt for instructions 
  * 
- * Use Streaming.h from Mial Hart
- *
  * Use FatFs library from ChaN
  *   (see http://elm-chan.org/fsw/ff/00index_e.html )
  * or SdFat library from William Greiman
@@ -359,12 +360,6 @@ boolean FtpServer::processCommand()
       Serial.print(F("Data port set to "));
       Serial.println(dataPort);
     #endif
-#if 0
-    client << "227 Entering Passive Mode ("
-           << dataIp[0] << "," << dataIp[1] << "," << dataIp[2] << "," << dataIp[3]
-           << "," << ( dataPort >> 8 ) << "," << ( dataPort & 255 )
-           << ").\r\n";
-#endif
     client.print("227 Entering Passive Mode (");
     client.print(dataIp[0]);client.print(",");
     client.print(dataIp[1]);client.print(",");
@@ -496,10 +491,14 @@ boolean FtpServer::processCommand()
         while( dir.nextFile())
         {
           if( dir.isDir() )
-            data << "+/";
-          else
-            data << "+r,s" << dir.fileSize();
-          data << ",\t" << dir.fileName() << "\r\n";
+            data.print("+/");
+          else {
+            data.print("+r,s");
+            data.print(dir.fileSize());
+          }
+          data.print(",\t");
+          data.print(dir.fileName());
+          data.print("\r\n");
           nm ++;
         }
         client.print("226 ");
@@ -529,10 +528,17 @@ boolean FtpServer::processCommand()
       } else {
         while( dir.nextFile())
         {
-          data << "Type=" << ( dir.isDir() ? "dir" : "file" ) << ";"
-               << "Size=" << dir.fileSize() << ";"
-               << "Modify=" << makeDateTimeStr( dtStr, dir.fileModDate(), dir.fileModTime()) << "; " 
-               << dir.fileName() << "\r\n";
+          data.print("Type=");
+          data.print(dir.isDir() ? "dir" : "file");
+          data.print(";");
+          data.print("Size=");
+          data.print(dir.fileSize());
+          data.print(";");
+          data.print("Modify=");
+          data.print(makeDateTimeStr( dtStr, dir.fileModDate(), dir.fileModTime()));
+          data.print("; ");
+          data.print(dir.fileName());
+          data.print("\r\n");
           nm ++;
         }
         client.print("226-options: -a -l\r\n");
@@ -562,7 +568,8 @@ boolean FtpServer::processCommand()
       } else {
         while( dir.nextFile())
         {
-          data << dir.fileName() << "\r\n";
+          data.print(dir.fileName());
+          data.print("\r\n");
           nm ++;
         }
         client.print("226 ");
@@ -742,7 +749,6 @@ boolean FtpServer::processCommand()
   //
   else if( ! strcmp( command, "RNTO" ))
   {
-//  Serial << buf << endl;
     char path[ FTP_CWD_SIZE ];
     char dir[ FTP_FIL_SIZE ];
     if( strlen( buf ) == 0 || ! rnfrCmd )

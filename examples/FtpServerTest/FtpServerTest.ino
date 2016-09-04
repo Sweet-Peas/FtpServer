@@ -3,7 +3,6 @@
  * Copyright (c) 2014-2015 by Jean-Michel Gallego
  */
 
-#include <Streaming.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <FatLib.h>

@@ -9,7 +9,6 @@ How to use FtpServer on Arduino Due and ide 1.6.0
 =================================================
 
 1) Download and install
-   - Streaming ( http://arduiniana.org/Streaming/Streaming5.zip )
    - FatFs
 2) To test the access to the SD card is ok :
    - load example libraries/FatFs/examples/FatFsDemo,
