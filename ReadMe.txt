@@ -1,3 +1,9 @@
+## FtpServer
+
+This FtpServer was loosely branched out from gallegojm's Arduino-Ftp-Server. As I could not get the code to compile properly due to various name collisions I decided to get rid of the offending Streaming library and use print statements instead. It seem to have done the trick, it compiles without the streaming library and it works perfectly.
+
+All credits go to gallegojm for creating this ftp server.
+
 =================================================
 How to use FtpServer on Arduino Due and ide 1.6.0
 =================================================
